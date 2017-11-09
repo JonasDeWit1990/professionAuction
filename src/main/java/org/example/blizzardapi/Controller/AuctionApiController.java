@@ -1,63 +1,37 @@
 package org.example.blizzardapi.Controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.blizzardapi.Model.AuctionContentModel;
 import org.example.blizzardapi.Model.AuctionModel;
+import org.example.blizzardapi.Service.auctionListService;
+import org.example.blizzardapi.Service.restCallService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+
 
 @RestController
 public class AuctionApiController {
+    @Autowired
+    restCallService RestCallService;
 
-    private JsonNode callURL (String urlString) throws IOException  {
-        URL url = new URL(urlString);
-
-        HttpURLConnection conn =
-                (HttpURLConnection) url.openConnection();
-
-        if (conn.getResponseCode() != 200) {
-            throw new IOException(conn.getResponseMessage());
-        }
-
-        // Buffer the result into a string
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        rd.close();
-
-        conn.disconnect();
-
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(sb.toString());
-
-    }
-
-    private AuctionModel ConvertAuctionResponseToPojo(JsonNode inputJson) {
-        return new AuctionModel(inputJson.get("files").get(0).get("url").textValue(),
-                                inputJson.get("files").get(0).get("lastModified").asLong());
-
-    }
+    @Autowired
+    auctionListService AuctionListService;
 
     @RequestMapping("/test")
-    public JsonNode getCallAuctionAPI() throws IOException {
+    public String getCallAuctionAPI() throws IOException {
        //retrieve part 1 (auction content link + lastmodified)
-        JsonNode ReturnJson =  callURL("https://eu.api.battle.net/wow/auction/data/medivh?locale=en_GB&apikey=4p5gufr82emm2mr9um26mddxvxyg677n");
-        AuctionModel linkToProcess = new AuctionModel(ConvertAuctionResponseToPojo(ReturnJson));
+        JsonNode ReturnJson =  RestCallService.callURL("https://eu.api.battle.net/wow/auction/data/medivh?locale=en_GB&apikey=4p5gufr82emm2mr9um26mddxvxyg677n");
+        AuctionModel linkToProcess = new AuctionModel(ReturnJson);
 
         //retrieve Auction house content data
-        JsonNode dataToProcess = callURL(linkToProcess.getAuctionContent());
+        JsonNode dataToProcess = RestCallService.callURL(linkToProcess.getAuctionContent());
+        AuctionContentModel processed = new AuctionContentModel(AuctionListService.ProcessAuctionList(dataToProcess));
 
-        return dataToProcess;
+
+        return processed.GetCount();
     }
 
 }

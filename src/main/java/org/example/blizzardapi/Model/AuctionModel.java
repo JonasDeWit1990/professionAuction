@@ -1,5 +1,7 @@
 package org.example.blizzardapi.Model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class AuctionModel {
     private String auctionContent;
     private Long lastModified;
@@ -16,6 +18,13 @@ public class AuctionModel {
 
     public String getAuctionContent() {
         return auctionContent;
+    }
+
+    // converts a specific rest call to pojo
+    public AuctionModel(JsonNode inputJson) {
+        this.auctionContent = inputJson.get("files").get(0).get("url").textValue();
+        this.lastModified = inputJson.get("files").get(0).get("lastModified").asLong();
+
     }
 
     public void setAuctionContent(String auctionContent) {

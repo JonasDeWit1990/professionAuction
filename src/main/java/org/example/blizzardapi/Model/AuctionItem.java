@@ -1,21 +1,21 @@
 package org.example.blizzardapi.Model;
 
-class auction {
+class AuctionItem {
     private Long auc;
     private Long item;
     private Long bid;
     private Long buyout;
     private String timeLeft;
 
-    public auction(auction Auction) {
-        this.auc = Auction.getAuc();
-        this.item = Auction.getItem();
-        this.bid = Auction.getBid();
-        this.buyout = Auction.getBuyout();
-        this.timeLeft = Auction.getTimeLeft();
+    public AuctionItem(AuctionItem auction) {
+        this.auc = auction.getAuc();
+        this.item = auction.getItem();
+        this.bid = auction.getBid();
+        this.buyout = auction.getBuyout();
+        this.timeLeft = auction.getTimeLeft();
     }
 
-    public auction(Long auc, Long item, Long bid, Long buyout, String timeLeft) {
+    public AuctionItem(Long auc, Long item, Long bid, Long buyout, String timeLeft) {
         this.auc = auc;
         this.item = item;
         this.bid = bid;
