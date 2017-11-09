@@ -1,4 +1,4 @@
-package org.example.blizzardapi;
+package org.example.blizzardapi.Model;
 
 public class AuctionModel {
     private String auctionContent;
@@ -14,7 +14,7 @@ public class AuctionModel {
         this.lastModified = auctionModel.getLastModified();
     }
 
-    String getAuctionContent() {
+    public String getAuctionContent() {
         return auctionContent;
     }
 
@@ -22,7 +22,7 @@ public class AuctionModel {
         this.auctionContent = auctionContent;
     }
 
-    Long getLastModified() {
+    public Long getLastModified() {
         return lastModified;
     }
 

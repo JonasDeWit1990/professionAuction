@@ -1,7 +1,8 @@
-package org.example.blizzardapi;
+package org.example.blizzardapi.Controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.blizzardapi.Model.AuctionModel;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

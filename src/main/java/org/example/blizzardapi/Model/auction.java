@@ -1,45 +1,4 @@
-package org.example.blizzardapi;
-
-import java.util.List;
-
-public class AuctionContentModel {
-    //list of realms
-    private List<realm> realms;
-    //list of auctionitems
-    private List<auction> auctions;
-
-}
-
-class realm {
-    private String name;
-    private String slug;
-
-    public realm(realm Realm) {
-        this.name = Realm.getName();
-        this.slug = Realm.getSlug();
-    }
-
-    public realm(String name, String slug) {
-        this.name = name;
-        this.slug = slug;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-}
+package org.example.blizzardapi.Model;
 
 class auction {
     private Long auc;
