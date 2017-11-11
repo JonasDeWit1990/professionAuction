@@ -24,7 +24,7 @@ public class AuctionContentModel {
         return "number of realms: " + realms.size() + "<br>" + " Number of auctions: " + auctions.size();
     }
 
-    public void AddRealm(Realm realm) {
+    public void addRealm(Realm realm) {
         this.realms.add(realm);
     }
 

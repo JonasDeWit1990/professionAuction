@@ -1,6 +1,9 @@
 package org.example.blizzardapi.Model;
 
-class AuctionItem {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class AuctionItem {
     private Long auc;
     private Long item;
     private Long bid;
@@ -21,6 +24,10 @@ class AuctionItem {
         this.bid = bid;
         this.buyout = buyout;
         this.timeLeft = timeLeft;
+    }
+
+    public AuctionItem() {
+
     }
 
     public Long getAuc() {

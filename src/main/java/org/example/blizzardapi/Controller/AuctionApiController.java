@@ -23,7 +23,7 @@ public class AuctionApiController {
     @RequestMapping("/test")
     public String getCallAuctionAPI() throws IOException {
        //retrieve part 1 (auction content link + lastmodified)
-        JsonNode ReturnJson =  RestCallService.callURL("https://eu.api.battle.net/wow/auction/data/medivh?locale=en_GB&apikey=4p5gufr82emm2mr9um26mddxvxyg677n");
+        JsonNode ReturnJson =  RestCallService.callURL("https://eu.api.battle.net/wow/auction/data/ravencrest?locale=en_GB&apikey=4p5gufr82emm2mr9um26mddxvxyg677n");
         AuctionModel linkToProcess = new AuctionModel(ReturnJson);
 
         //retrieve Auction house content data

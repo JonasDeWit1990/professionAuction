@@ -1,12 +1,16 @@
 package org.example.blizzardapi.Model;
 
-class Realm {
+public class Realm {
     private String name;
     private String slug;
 
     public Realm(Realm realm) {
         this.name = realm.getName();
         this.slug = realm.getSlug();
+    }
+
+    public Realm() {
+
     }
 
     public Realm(String name, String slug) {
