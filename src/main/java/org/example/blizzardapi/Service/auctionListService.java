@@ -7,6 +7,7 @@ import org.example.blizzardapi.Model.AuctionContentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 
 
 // takes in the auctionList and processes it.
@@ -31,7 +32,7 @@ public class auctionListService {
                 }
             }
         }
-        
+
         //retrieve Auctions
         JsonNode auctions = auctionList.get("auctions");
         if(auctions.isArray()) {
@@ -49,5 +50,31 @@ public class auctionListService {
             System.out.println("TotalNumber: " + counter);
         }
         return auctionContent;
+    }
+
+    // process and aggregate data
+    public ArrayList<DbAggregateItem> AggregateData(AuctionContentModel auctionList) {
+        ArrayList<DbAggregateItem> aggregateItems = new ArrayList<>();
+
+        //TODO: rework to java 8 stream
+        for(AuctionItem auctionItem : auctionList.getAuctions()) {
+            if (aggregateItems.size() == 0) {
+                aggregateItems.add(new DbAggregateItem(auctionItem.getItem(), auctionItem.getBuyout()));
+            }
+            else {
+                boolean itemFound = false;
+                for(DbAggregateItem dbAggregateItem : aggregateItems) {
+                    if(auctionItem.getItem().equals(dbAggregateItem.getItemId())) {
+                        dbAggregateItem.addEntry(auctionItem.getBuyout());
+                        itemFound = true;
+                    }
+                }
+                if(!itemFound) {
+                    aggregateItems.add(new DbAggregateItem(auctionItem.getItem(), auctionItem.getBuyout()));
+                }
+            }
+        }
+
+        return aggregateItems;
     }
 }
