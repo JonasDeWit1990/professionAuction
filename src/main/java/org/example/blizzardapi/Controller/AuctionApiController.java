@@ -14,17 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 @RestController
 public class AuctionApiController {
-    @Autowired
-    restCallService RestCallService;
+    private final restCallService RestCallService;
+    private final auctionListService AuctionListService;
+    private final ServerPolledRepository repository;
 
     @Autowired
-    auctionListService AuctionListService;
-
-    @Autowired
-    ServerPolledRepository repository;
+    public AuctionApiController(restCallService RestCallService, auctionListService AuctionListService, ServerPolledRepository repository) {
+        this.RestCallService = RestCallService;
+        this.AuctionListService = AuctionListService;
+        this.repository = repository;
+    }
 
     @RequestMapping("/test")
     public ArrayList<DbAggregateItem> getCallAuctionAPI() throws IOException {

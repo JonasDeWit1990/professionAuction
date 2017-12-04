@@ -10,7 +10,7 @@ public class ServerPolled {
     private int id;
 
     @Column(nullable=false)
-    private String ServerName;
+    private String serverName;
 
     @Column(nullable = false)
     private Long lastPolled;
@@ -20,7 +20,7 @@ public class ServerPolled {
     }
 
     public ServerPolled(String serverName, Long lastPolled) {
-        this.ServerName = serverName;
+        this.serverName = serverName;
         this.lastPolled = lastPolled;
     }
 }
