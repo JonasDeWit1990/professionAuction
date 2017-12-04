@@ -1,13 +1,10 @@
 package org.example.blizzardapi.Controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.example.blizzardapi.Model.AuctionContentModel;
-import org.example.blizzardapi.Model.AuctionModel;
-import org.example.blizzardapi.Model.DbAggregateItem;
+import org.example.blizzardapi.Model.*;
 import org.example.blizzardapi.Service.auctionListService;
 import org.example.blizzardapi.Service.restCallService;
-import org.example.dataObjects.model.ServerPolled;
-import org.example.dataObjects.repo.ServerPolledRepository;
+import org.example.dataObjects.controller.ServerPolledService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,33 +13,44 @@ import java.util.ArrayList;
 
 @RestController
 public class AuctionApiController {
-    private final restCallService RestCallService;
-    private final auctionListService AuctionListService;
-    private final ServerPolledRepository repository;
+    private final restCallService restCallService;
+    private final auctionListService auctionListService;
+    private final ServerPolledService serverPollService;
 
     @Autowired
-    public AuctionApiController(restCallService RestCallService, auctionListService AuctionListService, ServerPolledRepository repository) {
-        this.RestCallService = RestCallService;
-        this.AuctionListService = AuctionListService;
-        this.repository = repository;
+    public AuctionApiController(restCallService RestCallService, auctionListService AuctionListService, ServerPolledService pollService) {
+        this.restCallService = RestCallService;
+        this.auctionListService = AuctionListService;
+        this.serverPollService = pollService;
     }
 
     @RequestMapping("/test")
-    public ArrayList<DbAggregateItem> getCallAuctionAPI() throws IOException {
+    public String getCallAuctionAPI() throws IOException {
+        String serverName = "ravencrest";
        //retrieve part 1 (auction content link + last modified) and convert to class
-        JsonNode ReturnJson =  RestCallService.callURL("https://eu.api.battle.net/wow/auction/data/ravencrest?locale=en_GB&apikey=4p5gufr82emm2mr9um26mddxvxyg677n");
+        JsonNode ReturnJson =  restCallService.callURL("https://eu.api.battle.net/wow/auction/data/ravencrest?locale=en_GB&apikey=4p5gufr82emm2mr9um26mddxvxyg677n");
         AuctionModel linkToProcess = new AuctionModel(ReturnJson);
 
-        ServerPolled serverPolled = repository.findByServerName("ravencrest");
+        Long LastModified = serverPollService.GetModifiedForServer(serverName);
 
-        //retrieve Auction house content data and convert to class
-        JsonNode dataToProcess = RestCallService.callURL(linkToProcess.getAuctionContent());
-        AuctionContentModel processed = new AuctionContentModel(AuctionListService.ProcessAuctionList(dataToProcess));
+        if(LastModified == null || !LastModified.equals(linkToProcess.getLastModified())) {
+            //retrieve Auction house content data and convert to class
+            JsonNode dataToProcess = restCallService.callURL(linkToProcess.getAuctionContent());
+            AuctionContentModel processed = new AuctionContentModel(auctionListService.ProcessAuctionList(dataToProcess));
 
-        //aggregate data
-        ArrayList<DbAggregateItem> aggregateItems = AuctionListService.AggregateData(processed);
+            //aggregate data
+            ArrayList<DbAggregateItem> aggregateItems = auctionListService.AggregateData(processed);
 
-        return aggregateItems;
+            //Save last modified to server
+            serverPollService.SaveModifiedForServer(serverName,linkToProcess.getLastModified());
+            return "Data processed successfully";
+        }
+        else
+            return "Data is up to date";
+
+
+
+
     }
 
 }

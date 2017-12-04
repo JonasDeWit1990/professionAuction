@@ -7,7 +7,7 @@ public class ServerPolled {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private int id;
+    private long id;
 
     @Column(nullable=false)
     private String serverName;
@@ -21,6 +21,22 @@ public class ServerPolled {
 
     public ServerPolled(String serverName, Long lastPolled) {
         this.serverName = serverName;
+        this.lastPolled = lastPolled;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public Long getLastPolled() {
+        return lastPolled;
+    }
+
+    public void setLastPolled(Long lastPolled) {
         this.lastPolled = lastPolled;
     }
 }
