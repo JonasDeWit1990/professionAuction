@@ -47,7 +47,6 @@ public class auctionListService {
                     System.out.print(e);
                 }
             }
-            System.out.println("TotalNumber: " + counter);
         }
         return auctionContent;
     }

@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Console;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -45,6 +46,8 @@ public class AuctionApiController {
         AuctionModel linkToProcess = new AuctionModel(ReturnJson);
 
         Long LastModified = serverPollService.GetModifiedForServer(servername);
+        DateFormat df = new SimpleDateFormat("yyyy/MM/yy HH:mm:ss");
+
 
         if(LastModified == null || !LastModified.equals(linkToProcess.getLastModified())) {
             //retrieve Auction house content data and convert to class
@@ -52,9 +55,8 @@ public class AuctionApiController {
             AuctionContentModel processed = new AuctionContentModel(auctionListService.ProcessAuctionList(dataToProcess));
 
             //aggregate data
-            List<ItemAuctionData> aggregateItems = blizzMapper.fromBlizzardDbAggregateList(auctionListService.AggregateData(processed));
-            System.out.println("Aggregate: " + aggregateItems.size());
-
+            List<ItemAuctionData> aggregateItems = blizzMapper.fromBlizzardDbAggregateList(auctionListService.AggregateData(processed),
+                    linkToProcess.getLastModified());
 
             //save aggregate data
             itemRepository.save(aggregateItems);
@@ -62,10 +64,14 @@ public class AuctionApiController {
 
             //Save last modified to server
             serverPollService.SaveModifiedForServer(servername,linkToProcess.getLastModified());
+            System.out.println(df.format(new Date()) + "Updating Data. modified: " +
+                    linkToProcess.getLastModified() + " Timestamp: " + df.format(new Date(linkToProcess.getLastModified())));
             return "Data processed successfully";
         }
-        else
+        else {
+            System.out.println(df.format(new Date()) + "No update needed. modified: " +
+                    linkToProcess.getLastModified() + " Timestamp: " + df.format(new Date(linkToProcess.getLastModified())));
             return "Data is up to date";
-
+        }
     }
 }

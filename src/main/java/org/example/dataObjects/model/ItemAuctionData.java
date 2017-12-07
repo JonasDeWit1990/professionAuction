@@ -1,6 +1,8 @@
 package org.example.dataObjects.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 public class ItemAuctionData {
@@ -24,11 +26,17 @@ public class ItemAuctionData {
     @Column(nullable=false)
     private Long buyOutAverage;
 
-    public ItemAuctionData(Long itemId, int count, Long buyOutMax, Long buyOutMin, Long buyOutAverage) {
+    @Column(nullable=false)
+    private Timestamp TimeStamp;
+
+    protected ItemAuctionData(){}
+
+    public ItemAuctionData(Long itemId, int count, Long buyOutMax, Long buyOutMin, Long buyOutAverage, Long lastModified) {
         this.itemId = itemId;
         this.count = count;
         this.buyOutMax = buyOutMax;
         this.buyOutMin = buyOutMin;
         this.buyOutAverage = buyOutAverage;
+        this.TimeStamp = new Timestamp(lastModified);
     }
 }
